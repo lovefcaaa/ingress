@@ -14,12 +14,14 @@ ifndef COMMIT
   COMMIT := git-$(shell git rev-parse --short HEAD)
 endif
 
-PKG=k8s.io/ingress/controllers/nginx
+#PKG=k8s.io/ingress/controllers/nginx
+#PKG=github.com/kubernetes/ingress-nginx
+PKG=k8s.io/ingress-nginx
 
 build: clean
 	CGO_ENABLED=0 GOOS=${GOOS} go build -a -installsuffix cgo \
-		-ldflags "-s -w -X ${PKG}/pkg/version.RELEASE=${RELEASE} -X ${PKG}/pkg/version.COMMIT=${COMMIT} -X ${PKG}/pkg/version.REPO=${REPO_INFO}" \
-		-o rootfs/nginx-ingress-controller ${PKG}/pkg/cmd/controller
+		-ldflags "-s -w -X ${PKG}/version.RELEASE=${RELEASE} -X ${PKG}/version.COMMIT=${COMMIT} -X ${PKG}/version.REPO=${REPO_INFO}" \
+		-o rootfs/nginx-ingress-controller ${PKG}/cmd/nginx
 
 container: build
 	$(DOCKER) build -t $(PREFIX):$(RELEASE) rootfs
